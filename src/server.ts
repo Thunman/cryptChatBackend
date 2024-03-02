@@ -5,6 +5,7 @@ import cors from "cors";
 import { readFileSync } from "fs";
 import { userRouter } from "./routers/userRouter";
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ const options = {
 	cert: readFileSync(sslCert),
 };
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/users", userRouter);
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.set("trust proxy", 1);
