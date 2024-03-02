@@ -19,7 +19,7 @@ const options = {
 };
 app.use(express.json());
 app.use("/api/users", userRouter);
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.set("trust proxy", 1);
 
 const server = https.createServer(options, app);
