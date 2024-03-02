@@ -13,3 +13,4 @@ userRouter.get(
 	auth,
 	userController.getConversations
 );
+userRouter.post("/sendMessage", rateLimiter, auth, userController.sendMessage);

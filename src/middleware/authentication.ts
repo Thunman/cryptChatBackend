@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import { Response, NextFunction } from "express";
-import { IRequestWithUser } from "../helpers/interfaces";
+import { AuthenticatedRequest } from "../helpers/interfaces";
 export const auth = (
-	req: IRequestWithUser,
+	req: AuthenticatedRequest,
 	res: Response,
 	next: NextFunction
 ) => {

@@ -1,10 +1,10 @@
 import { validationResult } from "express-validator";
 import { loginValidators, registerValidators } from "../middleware/validators";
 import { Request, Response } from "express";
-import { Conversation, User } from "../models/models";
+import { Conversation, Message, User } from "../models/models";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { IRequestWithUser } from "../helpers/interfaces";
+import { AuthenticatedRequest } from "../helpers/interfaces";
 
 const userController = {
 	register: [
@@ -63,7 +63,7 @@ const userController = {
 			}
 		},
 	],
-	getConversations: async (req: IRequestWithUser, res: Response) => {
+	getConversations: async (req: AuthenticatedRequest, res: Response) => {
 		const uid = req.user._id;
 		const user = await User.findById(uid);
 		if (!user) return res.status(404).json({ message: "User not found" });
@@ -71,6 +71,26 @@ const userController = {
 			_id: { $in: user.conversations },
 		});
 		return conversations;
+	},
+	sendMessage: async (req: AuthenticatedRequest, res: Response) => {
+		try {
+			const { conversationId, text } = req.body;
+			const conversation = await Conversation.findById(conversationId);
+			if (!conversation) {
+				return res.status(404).json({ message: "Conversation not found" });
+			}
+			const message = new Message({
+				sender: req.user._id,
+				text: text,
+				timestamp: new Date(),
+			});
+			conversation.messages.push(message);
+			await conversation.save();
+			return res.json(message);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: "Internal server error" });
+		}
 	},
 };
 export default userController;
