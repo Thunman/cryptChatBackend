@@ -1,9 +1,10 @@
 import { validationResult } from "express-validator";
 import { loginValidators, registerValidators } from "../middleware/validators";
 import { Request, Response } from "express";
-import { User } from "../models/models";
+import { Conversation, User } from "../models/models";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { IRequestWithUser } from "../helpers/interfaces";
 
 const userController = {
 	register: [
@@ -62,5 +63,14 @@ const userController = {
 			}
 		},
 	],
+	getConversations: async (req: IRequestWithUser, res: Response) => {
+		const uid = req.user._id;
+		const user = await User.findById(uid);
+		if (!user) return res.status(404).json({ message: "User not found" });
+		const conversations = await Conversation.find({
+			_id: { $in: user.conversations },
+		});
+		return conversations;
+	},
 };
 export default userController;

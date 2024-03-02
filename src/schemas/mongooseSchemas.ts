@@ -22,3 +22,28 @@ export const userSchema = new mongoose.Schema({
 		default: false,
 	},
 });
+
+export const conversationsSchema = new mongoose.Schema({
+	participants: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+		},
+	],
+	messages: [
+		{
+			sender: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+			text: {
+				type: String,
+				required: true,
+			},
+			timestamp: {
+				type: Date,
+				default: Date.now,
+			},
+		},
+	],
+});
